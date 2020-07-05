@@ -1,4 +1,4 @@
-function createState(reducer) {
+function createStore(reducer) {
 	// The store should have four parts
 	// 1. The state
 	// 2. Get the state.
@@ -105,7 +105,7 @@ function app(state = {}, action) {
 	}
 }
 
-const store = createState(app);
+const store = createStore(app);
 
 store.subscribe(() => {
 	console.log('The new state is: ', store.getState());
