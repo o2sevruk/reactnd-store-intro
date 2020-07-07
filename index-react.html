@@ -32,6 +32,7 @@
 		<script src="https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js"></script>
 		<script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js"></script>
 		<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+		<script src="https://unpkg.com/react-redux@5.0.6/dist/react-redux.min.js"></script>
 		<script src="https://tylermcginnis.com/goals-todos-api/index.js"></script>
 	</head>
 	<body>
@@ -307,7 +308,7 @@
 				}
 			}
 			
-			const ConnectedTodos = connect((state) => ({
+			const ConnectedTodos = ReactRedux.connect((state) => ({
 				todos: state.todos
 			}))(Todos);
 			
@@ -342,7 +343,7 @@
 				}
 			}
 			
-			const ConnectedGoals = connect((state) => ({
+			const ConnectedGoals = ReactRedux.connect((state) => ({
 				goals: state.goals
 			}))(Goals);
 			
@@ -360,56 +361,16 @@
 					
 					return (
 						<div>
-							<ConnectedTodos /> <ConnectedGoals />
+							<ConnectedTodos />
+							<ConnectedGoals />
 						</div>
 					)
 				}
 			}
 			
-			const ConnectedApp = connect((state) => ({
+			const ConnectedApp = ReactRedux.connect((state) => ({
 				loading: state.loading
 			}))(App);
-			
-			function connect(mapStateToProps) {
-				return (Component) => {
-					class Receiver extends React.Component {
-						componentDidMount() {
-							const {subscribe} = this.props.store;
-							
-							this.unsubscribe = subscribe(() => {
-								this.forceUpdate();
-							})
-						}
-						
-						componentWillUnmount() {
-							this.unsubscribe;
-						}
-						
-						render() {
-							const {dispatch, getState} = this.props.store,
-								state = getState(),
-								stateNeeded = mapStateToProps(state);
-							
-							return <Component {...stateNeeded} dispatch={dispatch} />
-						}
-					}
-					
-					
-					class ConnectedComponent extends React.Component {
-						render() {
-							return (
-								<Context.Consumer>
-									{store => <Receiver store={store} />}
-								</Context.Consumer>
-							)
-						}
-					}
-					
-					return ConnectedComponent;
-				}
-			}
-			
-			const Context = React.createContext();
 			
 			class Provider extends React.Component {
 				render() {
@@ -422,7 +383,9 @@
 			}
 			
 			ReactDOM.render(
-				<Provider store={store}> <ConnectedApp /> </Provider>,
+				<ReactRedux.Provider store={store}>
+					<ConnectedApp />
+				</ReactRedux.Provider>,
 				document.getElementById('app')
 			);
 		</script>
